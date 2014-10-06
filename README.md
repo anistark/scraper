@@ -4,4 +4,5 @@ scraper
 Scraping websites
 
 
-Using simple html dom parser to scrap stackoverflow website given the tag to be inserted as user input.
+Using simple html dom parser to scrap stackoverflow website given the tag to be inserted as user input. Storing the data in json file format.
+
