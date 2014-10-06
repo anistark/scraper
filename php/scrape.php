@@ -34,4 +34,14 @@ foreach($ret as $v) {
     echo '<li>'.$v['question'].'<strong> Status: </strong>'.$v['status'].'</li>';
     echo '</ul>';
 }
+
+$file = file_get_contents('data.json');
+$data = json_decode($file);
+unset($file);//prevent memory leaks for large json.
+//insert data here
+$data[] = array('data'=>'scraper data');
+//save the file
+file_put_contents('data.json',json_encode($ret));
+unset($data);//release memory
+
 ?>
