@@ -16,9 +16,10 @@ function scraping_stackoverflow() {
         $item['vote'] = trim($questions->find('span.vote-count-post', 0)->plaintext);
         // get status
         $item['status'] = trim($questions->find('div.status', 0)->plaintext);
+        $item['status'] = preg_replace("/[^0-9,.]/", "", $item['status']);
         // get views
         $item['views'] = trim($questions->find('div.views', 0)->plaintext);
-        
+        $item['views'] = preg_replace("/[^0-9,.]/", "", $item['views']);
         $ret[] = $item;
     }
     
@@ -34,12 +35,10 @@ function scraping_stackoverflow() {
 $ret = scraping_stackoverflow();
 
 foreach($ret as $v) {
-    echo $v['questions'].'<br>';
-    echo '<ul>';
-    echo '<li>'.$v['question'].'<strong> Votes: </strong>'.$v['vote'].'<strong> Status: </strong>'.$v['status'].'<strong> Viewed: </strong>'.$v['views'].'</li>';
-    echo '</ul>';
-    if ($v['status']=='0answers')
-        $count = $count+1;
+    //if ($v['status']=='0answers')
+    //    $count = $count+1;
+    //$v['status']= preg_replace("/[^0-9,.]/", "", $v['status']);
+    //echo $v['status'];
 }
 
 // json part
@@ -55,11 +54,31 @@ unset($data);//release memory
 $file = file_get_contents('data.json');
 $json_array  = json_decode($file, true);
 unset($file);
+
+// json to csv
+$json = file_get_contents('data.json');
+$array = json_decode($json, true);
+$f = fopen('data.csv', 'w');
+$firstLineKeys = false;
+foreach ($array as $line)
+{
+	if (empty($firstLineKeys))
+	{
+		$firstLineKeys = array_keys($line);
+		fputcsv($f, $firstLineKeys);
+		$firstLineKeys = array_flip($firstLineKeys);
+	}
+	// Using array_merge is important to maintain the order of keys acording to the first element
+	fputcsv($f, array_merge($firstLineKeys, $line));
+}
+
+
 $elementCount  = count($json_array);
 
 // Display
 $answered_count = $elementCount - $count;
-echo 'Total questions: '.$elementCount.'<br />';
-echo 'Total Answered questions: '.$answered_count;
+//echo 'Total questions: '.$elementCount.'<br />';
+//echo 'Total Answered questions: '.$answered_count;
 
+header("Location: visualize.php");
 ?>

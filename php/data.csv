@@ -1,0 +1,16 @@
+question,vote,status,views
+"Decoding an array",0,0,2
+"fgetc not continuing past EOF",1,0,4
+"How to create a 2d array, the dimensions of which are specified by the user? (in C)",-1,0,7
+"how to open multiple windows in gtk",0,0,5
+"Looping over array fast",4,0,26
+"Force all declared functions be defined",0,0,10
+"Error Project Euler # 8",0,2,26
+"passing a nested structure to function using pointers",0,0,19
+"Why are typedef identifiers(being a definition in C) allowed to be declared multiple times?",5,3,45
+"Use ctypes with typedef",1,0,24
+"input/output error in ejecting Cd rom from C code",1,1,22
+"Creating a linked list to implement a queue",1,4,30
+"Problems with OpenCL",0,0,18
+"Using const void* instead of void*, for any type",0,2,56
+"Printf having unusual behavior in C program",0,3,44
