@@ -5,41 +5,52 @@ $count = 0;
 
 function scraping_stackoverflow() {
     // create HTML DOM
-    $url='http://stackoverflow.com/questions/tagged/'.$_POST['value'];
-    $html = file_get_html($url);
+    for ($i = 1; $i <= 5; $i++) {
+        $url[i]='http://stackoverflow.com/questions/tagged/'.$_POST['value'.$i];
+        $html = file_get_html($url[i]);
 
-    // get questions block
-    foreach($html->find('div[class^=question-summary]') as $questions) {
-        // get question url
-        $item['question'] = trim($questions->find('a.question-hyperlink', 0)->plaintext);
-        // get question vote
-        $item['vote'] = trim($questions->find('span.vote-count-post', 0)->plaintext);
-        // get status
-        $item['status'] = trim($questions->find('div.status', 0)->plaintext);
-        $item['status'] = preg_replace("/[^0-9,.]/", "", $item['status']);
-        // get views
-        $item['views'] = trim($questions->find('div.views', 0)->plaintext);
-        $item['views'] = preg_replace("/[^0-9,.]/", "", $item['views']);
-        $ret[] = $item;
+        // get questions block
+        $c=0;
+        $nitem['tag'] = $_POST['value'.$i];
+        foreach($html->find('div[class^=question-summary]') as $questions) {
+            // get question url
+            $item['question'] = trim($questions->find('a.question-hyperlink', 0)->plaintext);
+            $qurl = trim($questions->find('a.question-hyperlink', 0)->href);
+            $qhtml = file_get_html('http://stackoverflow.com'.$qurl);
+            foreach($qhtml->find('div[id^=answers]') as $ans) {
+                $ac = trim($ans->find('div.accepted-answer', 0)->id);
+                if($ac != null) {
+                    $c = $c + 1;
+                }
+            }
+            // get question vote
+            $item['vote'] = trim($questions->find('span.vote-count-post', 0)->plaintext);
+            // get status
+            $item['status'] = trim($questions->find('div.status', 0)->plaintext);
+            $item['status'] = preg_replace("/[^0-9,.]/", "", $item['status']);
+            // get views
+            $item['views'] = trim($questions->find('div.views', 0)->plaintext);
+            $item['views'] = preg_replace("/[^0-9,.]/", "", $item['views']);
+            $ret[] = $item;
+        }
+        $nitem['accpeted_answers'] = $c;
+        $nret[] = $nitem;
+        
+        // clean up memory
+        $html->clear();
+        unset($html);
     }
-    
-    // clean up memory
-    $html->clear();
-    unset($html);
-
-    return $ret;
+    return $nret;
 }
 
 // -----------------------------------------------------------------------------
 // test it!
-$ret = scraping_stackoverflow();
+$nret = scraping_stackoverflow();
 
-foreach($ret as $v) {
-    //if ($v['status']=='0answers')
-    //    $count = $count+1;
-    //$v['status']= preg_replace("/[^0-9,.]/", "", $v['status']);
-    //echo $v['status'];
-}
+/*foreach($nret as $nv) {
+    echo $nv['tag'];
+    echo $nv['accepted_answers'];
+}*/
 
 // json part
 $file = file_get_contents('data.json');
@@ -48,7 +59,7 @@ unset($file);//prevent memory leaks for large json.
 //insert data here
 $data[] = array('data'=>'scraper data');
 //save the file
-file_put_contents('data.json',json_encode($ret));
+file_put_contents('data.json',json_encode($nret));
 unset($data);//release memory
 
 $file = file_get_contents('data.json');

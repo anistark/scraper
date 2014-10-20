@@ -69,15 +69,15 @@ var svg = d3.select("body").append("svg")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 d3.csv("data.csv", function(error, data) {
-  var ageNames = d3.keys(data[0]).filter(function(key) { return key !== "question"; });
+  var ageNames = d3.keys(data[0]).filter(function(key) { return key !== "tag"; });
 
   data.forEach(function(d) {
     d.ages = ageNames.map(function(name) { return {name: name, value: +d[name]}; });
   });
 
-  x0.domain(data.map(function(d) { return d.question; }));
+  x0.domain(data.map(function(d) { return d.tag; }));
   x1.domain(ageNames).rangeRoundBands([0, x0.rangeBand()]);
-  y.domain([-15, d3.max(data, function(d) { return d3.max(d.ages, function(d) { return d.value; }); })]);
+  y.domain([0, d3.max(data, function(d) { return d3.max(d.ages, function(d) { return d.value; }); })]);
 
   svg.append("g")
       .attr("class", "x axis")
@@ -94,13 +94,13 @@ d3.csv("data.csv", function(error, data) {
       .style("text-anchor", "end")
       .text("Scale");
 
-  var question = svg.selectAll(".question")
+  var tag = svg.selectAll(".tag")
       .data(data)
     .enter().append("g")
       .attr("class", "g")
-      .attr("transform", function(d) { return "translate(" + x0(d.question) + ",0)"; });
+      .attr("transform", function(d) { return "translate(" + x0(d.tag) + ",0)"; });
 
-  question.selectAll("rect")
+  tag.selectAll("rect")
       .data(function(d) { return d.ages; })
     .enter().append("rect")
       .attr("width", x1.rangeBand())
