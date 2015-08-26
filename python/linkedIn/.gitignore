@@ -3,6 +3,9 @@
 # Env files
 env
 
+# Compiled files
+*.pyc
+
 # Misc Junk Files
 .DS_Store
 
