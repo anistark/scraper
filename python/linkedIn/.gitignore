@@ -1,0 +1,8 @@
+# Ignore all the files
+
+# Env files
+env
+
+# Misc Junk Files
+.DS_Store
+
